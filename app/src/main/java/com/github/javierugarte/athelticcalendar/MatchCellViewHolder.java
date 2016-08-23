@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 public class MatchCellViewHolder extends RecyclerView.ViewHolder {
 
     private final Context context;
+    private final View view;
 
     private final TextView textView;
     private final ImageView team1ImageView;
@@ -23,9 +24,16 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
     public MatchCellViewHolder(View v, Context context) {
         super(v);
         this.context = context;
+        this.view = v;
         textView = (TextView) v.findViewById(R.id.tv_title);
         team1ImageView = (ImageView) v.findViewById(R.id.iv_team1);
         team2ImageView = (ImageView) v.findViewById(R.id.iv_team2);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     public void bind(Match match){
@@ -34,4 +42,7 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
         Glide.with(context).load(match.getTeam2Shield()).into(team2ImageView);
     }
 
+    public View getView() {
+        return view;
+    }
 }

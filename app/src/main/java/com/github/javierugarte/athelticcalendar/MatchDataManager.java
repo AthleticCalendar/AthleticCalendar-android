@@ -82,8 +82,8 @@ public class MatchDataManager {
                 match.setTeam2(jsonMatch.getString("team2"));
                 match.setTeam2Shield(jsonMatch.getString("team2_shield"));
 
-                match.setDate(jsonMatch.getString("date"));
-                match.setHour(jsonMatch.getString("hour"));
+                match.setStartTime(jsonMatch.getString("startTime"));
+                match.setEndTime(jsonMatch.getString("endTime"));
 
                 match.setTvs(jsonMatch.getString("tv"));
 

@@ -3,6 +3,7 @@ package com.github.javierugarte.athelticcalendar;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
@@ -14,11 +15,20 @@ import java.util.List;
  */
 public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> {
 
+    public interface OnClickItem {
+        void onClick(View view, int position, Match match);
+    }
+
     protected List<Match> mData = new ArrayList<>();
+    private OnClickItem mOnClick = null;
     private final Context context;
 
     public BasicListAdapter(Context context) {
         this.context = context;
+    }
+
+    public void setOnClickItem(OnClickItem onClickItem) {
+        this.mOnClick = onClickItem;
     }
 
     @Override
@@ -31,8 +41,16 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(MatchCellViewHolder holder, int position) {
+    public void onBindViewHolder(MatchCellViewHolder holder, final int position) {
         holder.bind(mData.get(position));
+        holder.getView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mOnClick != null) {
+                    mOnClick.onClick(view, position, mData.get(position));
+                }
+            }
+        });
     }
 
     @Override
