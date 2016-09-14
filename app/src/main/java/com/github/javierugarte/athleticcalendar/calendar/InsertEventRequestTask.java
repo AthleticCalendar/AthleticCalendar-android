@@ -1,4 +1,4 @@
-package com.github.javierugarte.athelticcalendar.calendar;
+package com.github.javierugarte.athleticcalendar.calendar;
 
 import android.os.AsyncTask;
 
@@ -9,23 +9,21 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecovera
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.DateTime;
-import com.google.api.services.calendar.model.Events;
-
-import java.io.IOException;
+import com.google.api.services.calendar.model.Event;
 
 /**
  * Copyright 2016 Javier González
  * All right reserved.
  */
 
-public class EventsRequestTask extends AsyncTask<Void, Void, Events> {
+public class InsertEventRequestTask extends AsyncTask<Void, Void, Event> {
     private com.google.api.services.calendar.Calendar mService = null;
+    private Event event = null;
     private String calendarId = null;
     private Exception mLastError = null;
-    private GoogleCalendar.OnEventsResponseListener l = null;
+    private GoogleCalendar.OnInsertEventResponseListener l = null;
 
-    public EventsRequestTask(GoogleAccountCredential credential, String calendarId, GoogleCalendar.OnEventsResponseListener l) {
+    public InsertEventRequestTask(Event event, String calendarId, GoogleAccountCredential credential, GoogleCalendar.OnInsertEventResponseListener l) {
         HttpTransport transport = AndroidHttp.newCompatibleTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
         mService = new com.google.api.services.calendar.Calendar.Builder(
@@ -33,6 +31,7 @@ public class EventsRequestTask extends AsyncTask<Void, Void, Events> {
                 .setApplicationName("Google Calendar API Android Quickstart")
                 .build();
 
+        this.event = event;
         this.calendarId = calendarId;
         this.l = l;
     }
@@ -42,9 +41,9 @@ public class EventsRequestTask extends AsyncTask<Void, Void, Events> {
      * @param params no parameters needed for this task.
      */
     @Override
-    protected Events doInBackground(Void... params) {
+    protected Event doInBackground(Void... params) {
         try {
-            return getDataFromApi();
+            return mService.events().insert(calendarId, event).execute();
         } catch (Exception e) {
             mLastError = e;
             cancel(true);
@@ -52,24 +51,10 @@ public class EventsRequestTask extends AsyncTask<Void, Void, Events> {
         }
     }
 
-    /**
-     * Fetch a list of the next 10 events from the primary calendar.
-     * @return List of Strings describing returned events.
-     * @throws IOException
-     */
-    private Events getDataFromApi() throws IOException {
-        DateTime now = new DateTime(System.currentTimeMillis());
-        return mService.events().list(calendarId)
-                .setTimeMin(now)
-                .setOrderBy("startTime")
-                .setSingleEvents(true)
-                .execute();
-    }
-
     @Override
-    protected void onPostExecute(Events events) {
+    protected void onPostExecute(Event event) {
         if (l != null) {
-            l.onEvents(events);
+            l.onEventCreated(event);
         }
     }
 

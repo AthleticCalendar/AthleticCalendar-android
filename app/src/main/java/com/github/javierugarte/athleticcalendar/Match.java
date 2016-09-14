@@ -1,4 +1,4 @@
-package com.github.javierugarte.athelticcalendar;
+package com.github.javierugarte.athleticcalendar;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;

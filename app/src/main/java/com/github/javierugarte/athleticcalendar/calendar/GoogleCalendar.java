@@ -1,4 +1,4 @@
-package com.github.javierugarte.athelticcalendar.calendar;
+package com.github.javierugarte.athleticcalendar.calendar;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;

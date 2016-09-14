@@ -1,4 +1,4 @@
-package com.github.javierugarte.athelticcalendar;
+package com.github.javierugarte.athleticcalendar;
 
 import com.android.volley.VolleyError;
 

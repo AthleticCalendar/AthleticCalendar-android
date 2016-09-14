@@ -1,4 +1,4 @@
-package com.github.javierugarte.athelticcalendar;
+package com.github.javierugarte.athleticcalendar;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

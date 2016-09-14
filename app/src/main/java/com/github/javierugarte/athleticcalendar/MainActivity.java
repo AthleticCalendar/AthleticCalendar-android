@@ -1,4 +1,4 @@
-package com.github.javierugarte.athelticcalendar;
+package com.github.javierugarte.athleticcalendar;
 
 import android.Manifest;
 import android.accounts.AccountManager;
@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.github.javierugarte.athelticcalendar.calendar.GoogleCalendar;
+import com.github.javierugarte.athleticcalendar.calendar.GoogleCalendar;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
