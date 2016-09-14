@@ -59,6 +59,10 @@ public class Match {
     }
 
     public Date getStartTime() {
+        if (startTime == null) {
+            return null;
+        }
+
         return parseDate(startTime, "yyyy/MM/dd hh:mm:ss");
     }
 
@@ -67,6 +71,10 @@ public class Match {
     }
 
     public Date getEndTime() {
+        if (endTime == null) {
+            return null;
+        }
+
         return parseDate(endTime, "yyyy/MM/dd hh:mm:ss");
     }
 
@@ -99,12 +107,18 @@ public class Match {
     }
 
     private Date parseDate(String date, String format) {
+        if (date == null || format == null) {
+            return null;
+        }
+
         SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
+
         try {
             return formatter.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 

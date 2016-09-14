@@ -2,6 +2,7 @@ package com.github.javierugarte.athleticcalendar;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,7 +18,8 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
     private final Context context;
     private final View view;
 
-    private final TextView textView;
+    private final TextView titleTextView;
+    private final TextView dateTextView;
     private final ImageView team1ImageView;
     private final ImageView team2ImageView;
 
@@ -25,7 +27,8 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
         super(v);
         this.context = context;
         this.view = v;
-        textView = (TextView) v.findViewById(R.id.tv_title);
+        titleTextView = (TextView) v.findViewById(R.id.tv_title);
+        dateTextView = (TextView) v.findViewById(R.id.tv_date);
         team1ImageView = (ImageView) v.findViewById(R.id.iv_team1);
         team2ImageView = (ImageView) v.findViewById(R.id.iv_team2);
         v.setOnClickListener(new View.OnClickListener() {
@@ -37,7 +40,14 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Match match){
-        textView.setText(match.getTitle());
+
+        CharSequence date = null;
+        if (match.getStartTime() != null) {
+            date = DateFormat.format("dd-MM-yyyy kk:mm", match.getStartTime());
+        }
+
+        titleTextView.setText(match.getTitle());
+        dateTextView.setText(date);
         Glide.with(context).load(match.getTeam1Shield()).into(team1ImageView);
         Glide.with(context).load(match.getTeam2Shield()).into(team2ImageView);
     }
@@ -45,4 +55,5 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
     public View getView() {
         return view;
     }
+
 }
