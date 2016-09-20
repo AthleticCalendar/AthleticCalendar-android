@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.1"
 
     defaultConfig {
-        applicationId "com.github.javierugarte.athelticcalendar"
+        applicationId "com.github.javierugarte.athleticcalendar"
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
