@@ -57,6 +57,8 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
                     matchServer.setExists(true);
                     if (matchServer.getStartTime().getTime() != matchCalendar.getStartTime().getTime()) {
                         matchServer.setDifferentDate(true);
+                    } else {
+                        matchServer.setDifferentDate(false);
                     }
                     matchServer.setCalendarId(matchCalendar.getCalendarId());
                 } else {

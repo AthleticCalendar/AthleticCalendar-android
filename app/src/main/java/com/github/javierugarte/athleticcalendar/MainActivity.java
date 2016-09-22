@@ -5,19 +5,19 @@ import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -43,7 +43,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     GoogleAccountCredential mCredential;
-    private TextView mOutputText;
+    private String outputText;
     private Button mCallApiButton;
     ProgressDialog mProgress;
 
@@ -69,23 +69,35 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             @Override
             public void onClick(View view) {
                 mCallApiButton.setEnabled(false);
-                mOutputText.setText("");
                 getResultsFromApi();
                 mCallApiButton.setEnabled(true);
             }
         });
 
-        mOutputText = (TextView) findViewById(R.id.text_view);
+        Button showCalendar = (Button) findViewById(R.id.show_calendar_event_button);
+        showCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Events calendar")
+                        .setMessage(outputText)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .show();
+            }
+        });
 
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("Calling Google Calendar API ...");
-
 
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), CalendarScopes.all())
                 .setBackOff(new ExponentialBackOff());
 
+        getResultsFromApi();
     }
 
     /**
@@ -101,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (! isDeviceOnline()) {
-            mOutputText.setText("No network connection available.");
+            outputText = "No network connection available.";
         } else {
             new GoogleCalendar().getEvents(CALENDAR_ID, mCredential, new GoogleCalendar.OnEventsResponseListener() {
 
@@ -112,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     for (Match match : matches) {
                         message.append(match.getTitle()).append("  ").append(match.getStartTimeWithFormat()).append("\n");
                     }
-                    mOutputText.setText(message.toString());
+                    outputText = message.toString();
                 }
 
                 @Override
@@ -194,9 +206,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         switch(requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                    mOutputText.setText(
-                            "This app requires Google Play Services. Please install " +
-                                    "Google Play Services on your device and relaunch this app.");
+                    outputText = "This app requires Google Play Services. Please install " +
+                                    "Google Play Services on your device and relaunch this app.";
                 } else {
                     getResultsFromApi();
                 }
@@ -342,7 +353,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         adapter.setOnClickItem(new BasicListAdapter.OnClickItem() {
             @Override
             public void onClick(View view, int position, Match match) {
-                removeEvent(match);
+                if (match.exists())
+                    removeEvent(match);
                 insertEvent(match);
             }
         });
@@ -352,7 +364,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         new GoogleCalendar().insertEvent(match.getEvent(), CALENDAR_ID, mCredential, new GoogleCalendar.OnInsertEventResponseListener() {
             @Override
             public void onEventCreated(Event event) {
-                Toast.makeText(getApplicationContext(), "Event created " + event.getSummary(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Event created " + event.getSummary(), Toast.LENGTH_SHORT).show();
+                getResultsFromApi();
             }
 
             @Override
@@ -381,7 +394,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         new GoogleCalendar().removeEvent(match.getCalendarId(), CALENDAR_ID, mCredential, new GoogleCalendar.OnRemoveEventResponseListener() {
             @Override
             public void onEventRemove() {
-                Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_SHORT).show();
             }
 
             @Override
