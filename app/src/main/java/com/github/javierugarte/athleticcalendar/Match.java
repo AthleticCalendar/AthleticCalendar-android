@@ -29,6 +29,7 @@ public class Match {
     private String endTime;
 
     private String tvs;
+    private boolean differentDate;
 
     public String getId() {
         return id;
@@ -56,6 +57,10 @@ public class Match {
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
+    }
+
+    public void setStartTime(DateTime dateTime) {
+        startTime = dateTime.toString();
     }
 
     public Date getStartTime() {
@@ -104,6 +109,14 @@ public class Match {
 
     public void setTeam2Shield(String team2Shield) {
         this.team2Shield = team2Shield;
+    }
+
+    public void setDifferentDate(boolean differentDate) {
+        this.differentDate = differentDate;
+    }
+
+    public boolean isDifferentDate() {
+        return differentDate;
     }
 
     private Date parseDate(String date, String format) {

@@ -19,8 +19,11 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
         void onClick(View view, int position, Match match);
     }
 
-    protected List<Match> mData = new ArrayList<>();
-    private OnClickItem mOnClick = null;
+    private List<Match> dataMerge = new ArrayList<>();
+
+    private List<Match> dataCalendar;
+    private List<Match> dataServer;
+    private OnClickItem onClick = null;
     private final Context context;
 
     public BasicListAdapter(Context context) {
@@ -28,7 +31,37 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
     }
 
     public void setOnClickItem(OnClickItem onClickItem) {
-        this.mOnClick = onClickItem;
+        this.onClick = onClickItem;
+    }
+
+    public void setDataCalendar(List<Match> dataCalendar) {
+        this.dataCalendar = dataCalendar;
+        mergeData();
+        notifyDataSetChanged();
+    }
+
+    public void setDataServer(List<Match> dataServer) {
+        this.dataServer = dataServer;
+        mergeData();
+        notifyDataSetChanged();
+    }
+
+    private void mergeData() {
+        if (dataServer == null || dataCalendar == null) {
+            return;
+        }
+
+        for (Match matchServer : this.dataServer) {
+            for (Match matchCalendar : this.dataCalendar) {
+                if (matchServer.getTitle().equalsIgnoreCase(matchCalendar.getTitle())) {
+                    if (matchServer.getStartTime().getTime() != matchCalendar.getStartTime().getTime()) {
+                        matchServer.setDifferentDate(true);
+                    }
+                }
+            }
+
+            dataMerge.add(matchServer);
+        }
     }
 
     @Override
@@ -42,12 +75,12 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
 
     @Override
     public void onBindViewHolder(MatchCellViewHolder holder, final int position) {
-        holder.bind(mData.get(position));
+        holder.bind(dataMerge.get(position));
         holder.getView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mOnClick != null) {
-                    mOnClick.onClick(view, position, mData.get(position));
+                if (onClick != null) {
+                    onClick.onClick(view, position, dataServer.get(position));
                 }
             }
         });
@@ -55,59 +88,11 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mData.size();
-    }
-
-    public void addEntity(int i, Match entity) {
-        mData.add(i, entity);
-        notifyItemInserted(i);
-    }
-
-    public void deleteEntity(int i) {
-        mData.remove(i);
-        notifyItemRemoved(i);
-    }
-
-    public void moveEntity(int i, int loc) {
-        move(mData, i, loc);
-        notifyItemMoved(i, loc);
-    }
-
-    private void move(List<Match> data, int a, int b) {
-        Match temp = data.remove(a);
-        data.add(b, temp);
-    }
-
-    public void setData(final List<Match> data) {
-        // Remove all deleted items.
-        for (int i = mData.size() - 1; i >= 0; --i) {
-            if (getLocation(data, mData.get(i)) < 0) {
-                deleteEntity(i);
-            }
+        if (dataServer != null && dataCalendar != null) {
+            return dataServer.size();
         }
 
-        // Add and move items.
-        for (int i = 0; i < data.size(); ++i) {
-            Match entity = data.get(i);
-            int loc = getLocation(mData, entity);
-            if (loc < 0) {
-                addEntity(i, entity);
-            } else if (loc != i) {
-                moveEntity(i, loc);
-
-            }
-        }
-    }
-
-    private int getLocation(List<Match> data, Match entity) {
-        for (int j = 0; j < data.size(); ++j) {
-            Match newEntity = data.get(j);
-            if (entity.equals(newEntity)) {
-                return j;
-            }
-        }
-
-        return -1;
+        return 0;
     }
 
 }

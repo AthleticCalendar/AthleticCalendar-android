@@ -1,10 +1,13 @@
 package com.github.javierugarte.athleticcalendar.calendar;
 
+import com.github.javierugarte.athleticcalendar.Match;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
+
+import java.util.List;
 
 /**
  * Copyright 2016 Javier González
@@ -13,7 +16,7 @@ import com.google.api.services.calendar.model.Events;
 public class GoogleCalendar {
 
     public interface OnEventsResponseListener {
-        void onEvents(Events events);
+        void onResult(List<Match> events);
         void onCancel();
         void onError(GooglePlayServicesAvailabilityIOException error);
         void onErrorAuth(UserRecoverableAuthIOException error);

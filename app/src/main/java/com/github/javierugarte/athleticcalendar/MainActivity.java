@@ -29,7 +29,6 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecovera
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.Events;
 
 import java.util.List;
 
@@ -46,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private TextView mOutputText;
     private Button mCallApiButton;
     ProgressDialog mProgress;
+
+    BasicListAdapter adapter = new BasicListAdapter(this);
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
@@ -102,11 +103,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             mOutputText.setText("No network connection available.");
         } else {
             new GoogleCalendar().getEvents(CALENDAR_ID, mCredential, new GoogleCalendar.OnEventsResponseListener() {
+
                 @Override
-                public void onEvents(Events events) {
+                public void onResult(List<Match> matches) {
+
+
+                    adapter.setDataCalendar(matches);
                     StringBuilder message = new StringBuilder("");
-                    for (Event event : events.getItems()) {
-                        message.append(event.getSummary()).append("\n");
+                    for (Match match : matches) {
+                        message.append(match.getTitle()).append("\n");
                     }
                     mOutputText.setText(message.toString());
                 }
@@ -320,14 +325,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private void mountRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        final BasicListAdapter adapter = new BasicListAdapter(this);
         recyclerView.setAdapter(adapter);
+
 
         MatchDataManager matchDataManager = new MatchDataManager(this);
         matchDataManager.getNextMatches("", new OnNextMatchesResponse() {
             @Override
             public void onSuccess(List<Match> matches) {
-                adapter.setData(matches);
+                adapter.setDataServer(matches);
             }
 
             @Override

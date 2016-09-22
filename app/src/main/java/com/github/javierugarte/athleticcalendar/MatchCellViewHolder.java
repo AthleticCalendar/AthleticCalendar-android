@@ -1,6 +1,7 @@
 package com.github.javierugarte.athleticcalendar;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -50,6 +51,12 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
         dateTextView.setText(date);
         Glide.with(context).load(match.getTeam1Shield()).into(team1ImageView);
         Glide.with(context).load(match.getTeam2Shield()).into(team2ImageView);
+
+        if (match.isDifferentDate()) {
+            view.setBackgroundColor(Color.RED);
+        } else {
+            view.setBackgroundColor(Color.GREEN);
+        }
     }
 
     public View getView() {

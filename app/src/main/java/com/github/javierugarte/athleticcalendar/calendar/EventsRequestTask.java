@@ -2,6 +2,7 @@ package com.github.javierugarte.athleticcalendar.calendar;
 
 import android.os.AsyncTask;
 
+import com.github.javierugarte.athleticcalendar.Match;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
@@ -10,9 +11,15 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Copyright 2016 Javier González
@@ -69,7 +76,8 @@ public class EventsRequestTask extends AsyncTask<Void, Void, Events> {
     @Override
     protected void onPostExecute(Events events) {
         if (l != null) {
-            l.onEvents(events);
+            List<Match> matches = buildMatches(events);
+            l.onResult(matches);
         }
     }
 
@@ -87,5 +95,43 @@ public class EventsRequestTask extends AsyncTask<Void, Void, Events> {
             l.onCancel();
         }
     }
+
+    private List<Match> buildMatches(Events events) {
+
+        List<Match> matches = new ArrayList<>(events.getItems().size());
+
+        for (Event event : events.getItems()) {
+            Match match = new Match();
+
+            String [] teams = getTeams(event.getSummary());
+            match.setTeam1(teams[0]);
+            match.setTeam2(teams[1]);
+
+            String startDate = parseDate(event.getStart().getDateTime());
+            match.setStartTime(startDate);
+
+            match.setTvs(event.getLocation());
+
+            matches.add(match);
+        }
+
+        return matches;
+    }
+
+    private String[] getTeams(String summary) {
+        return summary.split(" vs ");
+    }
+
+    private String parseDate(DateTime date) {
+        if (date == null) {
+            return null;
+        }
+
+        Date otherDate = new Date(date.getValue());
+
+        DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        return df.format(otherDate);
+    }
+
 }
 
