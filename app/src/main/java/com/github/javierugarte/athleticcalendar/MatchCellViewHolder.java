@@ -24,6 +24,8 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
     private final ImageView team1ImageView;
     private final ImageView team2ImageView;
 
+    private final ImageView actionImageView;
+
     public MatchCellViewHolder(View v, Context context) {
         super(v);
         this.context = context;
@@ -32,6 +34,7 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
         dateTextView = (TextView) v.findViewById(R.id.tv_date);
         team1ImageView = (ImageView) v.findViewById(R.id.iv_team1);
         team2ImageView = (ImageView) v.findViewById(R.id.iv_team2);
+        actionImageView = (ImageView) v.findViewById(R.id.iv_action_icon);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,13 +56,13 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
         Glide.with(context).load(match.getTeam2Shield()).into(team2ImageView);
 
         if (match.isDifferentDate()) {
-            view.setBackgroundColor(Color.RED);
+            actionImageView.setImageResource(R.drawable.ic_modify_black);
         } else {
-            view.setBackgroundColor(Color.GREEN);
+            actionImageView.setImageResource(R.drawable.ic_done_black);
         }
 
         if (!match.exists()) {
-            view.setBackgroundColor(Color.BLUE);
+            actionImageView.setImageResource(R.drawable.ic_add_black);
         }
     }
 

@@ -1,5 +1,7 @@
 package com.github.javierugarte.athleticcalendar;
 
+import android.text.format.DateFormat;
+
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
@@ -71,6 +73,10 @@ public class Match {
         }
 
         return parseDate(startTime, "yyyy/MM/dd hh:mm:ss");
+    }
+
+    public String getStartTimeWithFormat() {
+        return "" + DateFormat.format("dd-MM-yyyy kk:mm", getStartTime());
     }
 
     public void setEndTime(String endTime) {

@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -106,12 +107,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                 @Override
                 public void onResult(List<Match> matches) {
-
-
                     adapter.setDataCalendar(matches);
                     StringBuilder message = new StringBuilder("");
                     for (Match match : matches) {
-                        message.append(match.getTitle()).append("\n");
+                        message.append(match.getTitle()).append("  ").append(match.getStartTimeWithFormat()).append("\n");
                     }
                     mOutputText.setText(message.toString());
                 }
