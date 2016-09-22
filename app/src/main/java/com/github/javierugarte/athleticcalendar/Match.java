@@ -30,6 +30,8 @@ public class Match {
 
     private String tvs;
     private boolean differentDate;
+    private String calendarId;
+    private boolean exists;
 
     public String getId() {
         return id;
@@ -119,6 +121,22 @@ public class Match {
         return differentDate;
     }
 
+    public void setExists(boolean exists) {
+        this.exists = exists;
+    }
+
+    public boolean exists() {
+        return this.exists;
+    }
+
+    public void setCalendarId(String calendarId) {
+        this.calendarId = calendarId;
+    }
+
+    public String getCalendarId() {
+        return this.calendarId;
+    }
+
     private Date parseDate(String date, String format) {
         if (date == null || format == null) {
             return null;
@@ -164,4 +182,5 @@ public class Match {
         return event;
 
     }
+
 }

@@ -43,6 +43,15 @@ public class GoogleCalendar {
         new InsertEventRequestTask(event, calendarId, credential, listener).execute();
     }
 
+    public interface OnRemoveEventResponseListener {
+        void onEventRemove();
+        void onCancel();
+    }
+
+    public void removeEvent(String eventId, String calendarId, GoogleAccountCredential credential, OnRemoveEventResponseListener listener) {
+        new RemoveEventRequestTask(eventId, calendarId, credential, listener).execute();
+    }
+
 
 
 

@@ -343,34 +343,52 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         adapter.setOnClickItem(new BasicListAdapter.OnClickItem() {
             @Override
             public void onClick(View view, int position, Match match) {
-                new GoogleCalendar().insertEvent(match.getEvent(), CALENDAR_ID, mCredential, new GoogleCalendar.OnInsertEventResponseListener() {
-                    @Override
-                    public void onEventCreated(Event event) {
-                        Toast.makeText(getApplicationContext(), "Event created " + event.getSummary(), Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onError(GooglePlayServicesAvailabilityIOException error) {
-                        Toast.makeText(getApplicationContext(), "Error GooglePlayServicesAvailabilityIOException", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onErrorAuth(UserRecoverableAuthIOException error) {
-                        Toast.makeText(getApplicationContext(), "Error UserRecoverableAuthIOException", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onError(Exception error) {
-                        Toast.makeText(getApplicationContext(), "Error " + error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                removeEvent(match);
+                insertEvent(match);
             }
         });
     }
 
+    private void insertEvent(Match match) {
+        new GoogleCalendar().insertEvent(match.getEvent(), CALENDAR_ID, mCredential, new GoogleCalendar.OnInsertEventResponseListener() {
+            @Override
+            public void onEventCreated(Event event) {
+                Toast.makeText(getApplicationContext(), "Event created " + event.getSummary(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(GooglePlayServicesAvailabilityIOException error) {
+                Toast.makeText(getApplicationContext(), "Error GooglePlayServicesAvailabilityIOException", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onErrorAuth(UserRecoverableAuthIOException error) {
+                Toast.makeText(getApplicationContext(), "Error UserRecoverableAuthIOException", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(Exception error) {
+                Toast.makeText(getApplicationContext(), "Error " + error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void removeEvent(Match match) {
+        new GoogleCalendar().removeEvent(match.getCalendarId(), CALENDAR_ID, mCredential, new GoogleCalendar.OnRemoveEventResponseListener() {
+            @Override
+            public void onEventRemove() {
+                Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 }

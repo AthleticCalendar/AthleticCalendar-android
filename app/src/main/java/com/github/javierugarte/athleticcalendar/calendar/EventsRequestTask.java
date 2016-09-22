@@ -103,6 +103,8 @@ public class EventsRequestTask extends AsyncTask<Void, Void, Events> {
         for (Event event : events.getItems()) {
             Match match = new Match();
 
+            match.setCalendarId(event.getId());
+
             String [] teams = getTeams(event.getSummary());
             match.setTeam1(teams[0]);
             match.setTeam2(teams[1]);

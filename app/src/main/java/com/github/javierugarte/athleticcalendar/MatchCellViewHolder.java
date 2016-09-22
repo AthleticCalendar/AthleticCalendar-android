@@ -57,6 +57,10 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
         } else {
             view.setBackgroundColor(Color.GREEN);
         }
+
+        if (!match.exists()) {
+            view.setBackgroundColor(Color.BLUE);
+        }
     }
 
     public View getView() {
