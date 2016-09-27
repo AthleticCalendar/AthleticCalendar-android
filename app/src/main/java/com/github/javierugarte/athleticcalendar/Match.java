@@ -31,7 +31,7 @@ public class Match {
     private String endTime;
 
     private String tvs;
-    private boolean differentDate;
+    private boolean different;
     private String calendarId;
     private boolean exists;
 
@@ -119,12 +119,12 @@ public class Match {
         this.team2Shield = team2Shield;
     }
 
-    public void setDifferentDate(boolean differentDate) {
-        this.differentDate = differentDate;
+    public void setDifferent(boolean different) {
+        this.different = different;
     }
 
-    public boolean isDifferentDate() {
-        return differentDate;
+    public boolean isDifferent() {
+        return different;
     }
 
     public void setExists(boolean exists) {

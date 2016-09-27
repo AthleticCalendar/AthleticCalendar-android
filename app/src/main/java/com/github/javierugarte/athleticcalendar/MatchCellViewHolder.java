@@ -55,7 +55,7 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
         Glide.with(context).load(match.getTeam1Shield()).into(team1ImageView);
         Glide.with(context).load(match.getTeam2Shield()).into(team2ImageView);
 
-        if (match.isDifferentDate()) {
+        if (match.isDifferent()) {
             actionImageView.setImageResource(R.drawable.ic_modify_black);
         } else {
             actionImageView.setImageResource(R.drawable.ic_done_black);
