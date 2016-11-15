@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     ProgressDialog mProgress;
 
     BasicListAdapter adapter = new BasicListAdapter(this);
+    SwipeRefreshLayout swipeContainer;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         setContentView(R.layout.activity_main);
 
         mountRecyclerView();
+        mountSwipeRefreshLayout();
 
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("Calling Google Calendar API ...");
@@ -73,16 +76,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 getApplicationContext(), CalendarScopes.all())
                 .setBackOff(new ExponentialBackOff());
 
-        getResultsFromApi();
+        getResults();
     }
 
-    /**
-     * Attempt to call the API, after verifying that all the preconditions are
-     * satisfied. The preconditions are: Google Play Services installed, an
-     * account was selected and the device currently has online access. If any
-     * of the preconditions are not satisfied, the app will prompt the user as
-     * appropriate.
-     */
+    private void getResults() {
+        getResultsFromApi();
+        getResultFromServer();
+    }
+
     private void getResultsFromApi() {
         if (! isGooglePlayServicesAvailable()) {
             acquireGooglePlayServices();
@@ -101,16 +102,19 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         message.append(match.getTitle()).append("  ").append(match.getStartTimeWithFormat()).append("\n");
                     }
                     outputText = message.toString();
+                    swipeContainer.setRefreshing(false);
                 }
 
                 @Override
                 public void onCancel() {
                     Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_LONG).show();
+                    swipeContainer.setRefreshing(false);
                 }
 
                 @Override
                 public void onError(GooglePlayServicesAvailabilityIOException error) {
                     showGooglePlayServicesAvailabilityErrorDialog(error.getConnectionStatusCode());
+                    swipeContainer.setRefreshing(false);
                 }
 
                 @Override
@@ -119,15 +123,32 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             error.getIntent(),
                             MainActivity.REQUEST_AUTHORIZATION
                     );
-
+                    swipeContainer.setRefreshing(false);
                 }
 
                 @Override
                 public void onError(Exception error) {
                     Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    swipeContainer.setRefreshing(false);
                 }
             });
         }
+    }
+
+    private void getResultFromServer() {
+        MatchDataManager matchDataManager = new MatchDataManager(this);
+        matchDataManager.getNextMatches("", new OnNextMatchesResponse() {
+            @Override
+            public void onSuccess(List<Match> matches) {
+                adapter.setDataServer(matches);
+                swipeContainer.setRefreshing(false);
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                swipeContainer.setRefreshing(false);
+            }
+        });
     }
 
     /**
@@ -313,19 +334,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-
-        MatchDataManager matchDataManager = new MatchDataManager(this);
-        matchDataManager.getNextMatches("", new OnNextMatchesResponse() {
-            @Override
-            public void onSuccess(List<Match> matches) {
-                adapter.setDataServer(matches);
-            }
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        });
-
         adapter.setOnClickItem(new BasicListAdapter.OnClickItem() {
             @Override
             public void onClick(View view, int position, Match match) {
@@ -334,6 +342,21 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 insertEvent(match);
             }
         });
+    }
+
+    private void mountSwipeRefreshLayout() {
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+
+        swipeContainer.setColorSchemeResources(R.color.colorPrimary);
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getResults();
+            }
+        });
+
+
     }
 
     private void showDialogWithCalendarEvents() {
