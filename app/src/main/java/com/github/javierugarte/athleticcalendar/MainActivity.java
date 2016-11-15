@@ -16,8 +16,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -44,7 +46,6 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     GoogleAccountCredential mCredential;
     private String outputText;
-    private Button mCallApiButton;
     ProgressDialog mProgress;
 
     BasicListAdapter adapter = new BasicListAdapter(this);
@@ -63,31 +64,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         setContentView(R.layout.activity_main);
 
         mountRecyclerView();
-
-        mCallApiButton = (Button) findViewById(R.id.button);
-        mCallApiButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mCallApiButton.setEnabled(false);
-                getResultsFromApi();
-                mCallApiButton.setEnabled(true);
-            }
-        });
-
-        Button showCalendar = (Button) findViewById(R.id.show_calendar_event_button);
-        showCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Events calendar")
-                        .setMessage(outputText)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        })
-                        .show();
-            }
-        });
 
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("Calling Google Calendar API ...");
@@ -360,6 +336,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         });
     }
 
+    private void showDialogWithCalendarEvents() {
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Events calendar")
+                .setMessage(outputText)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
+    }
+
     private void insertEvent(Match match) {
         new GoogleCalendar().insertEvent(match.getEvent(), CALENDAR_ID, mCredential, new GoogleCalendar.OnInsertEventResponseListener() {
             @Override
@@ -402,5 +389,22 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.show_calendar:
+                showDialogWithCalendarEvents();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
