@@ -92,6 +92,9 @@ public class Match {
     }
 
     public String getTvs() {
+        if (tvs == null) {
+            return "";
+        }
         return tvs;
     }
 
