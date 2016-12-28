@@ -4,3 +4,8 @@ Release notes
 #### 1.0.0
 
 * Initial version
+
+#### 1.0.1
+
+* #5 Not modified when there is no TV
+* #8 If the event exists, do nothing

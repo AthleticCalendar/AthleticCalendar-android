@@ -85,7 +85,10 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
             @Override
             public void onClick(View view) {
                 if (onClick != null) {
-                    onClick.onClick(view, position, dataServer.get(position));
+                    Match match = dataMerge.get(position);
+                    if (!match.exists() || match.isDifferent()) {
+                        onClick.onClick(view, position, match);
+                    }
                 }
             }
         });
