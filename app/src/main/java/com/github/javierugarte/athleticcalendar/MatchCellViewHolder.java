@@ -33,8 +33,8 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
     private final TextView hourTextView;
     private final ImageView team1ImageView;
     private final ImageView team2ImageView;
-
     private final TextView stateTextView;
+    private final TextView tvsTextView;
 
     public MatchCellViewHolder(View v, Context context) {
         super(v);
@@ -47,6 +47,7 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
         team1ImageView = (ImageView) v.findViewById(R.id.iv_team1);
         team2ImageView = (ImageView) v.findViewById(R.id.iv_team2);
         stateTextView = (TextView) v.findViewById(R.id.tv_state);
+        tvsTextView = (TextView) v.findViewById(R.id.tv_tvs);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,7 +68,9 @@ public class MatchCellViewHolder extends RecyclerView.ViewHolder {
         team1TextView.setText(match.getTeam1());
         team2TextView.setText(match.getTeam2());
         dateTextView.setText(date);
+        tvsTextView.setText(match.getTvs());
         hourTextView.setText(hour);
+
         Glide.with(context).load(match.getTeam1Shield()).into(team1ImageView);
         Glide.with(context).load(match.getTeam2Shield()).into(team2ImageView);
 
