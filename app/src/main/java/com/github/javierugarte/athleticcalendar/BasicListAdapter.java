@@ -53,7 +53,8 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
 
         for (Match matchServer : this.dataServer) {
             for (Match matchCalendar : this.dataCalendar) {
-                if (matchServer.getTitle().equalsIgnoreCase(matchCalendar.getTitle())) {
+                if (isEqualEvent(matchServer, matchCalendar)) {
+                    matchServer.setCalendarId(matchCalendar.getCalendarId());
                     matchServer.setExists(true);
                     if (matchServer.getStartTime().getTime() != matchCalendar.getStartTime().getTime() ||
                             !matchServer.getTvs().equalsIgnoreCase(matchCalendar.getTvs())) {
@@ -61,7 +62,6 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
                     } else {
                         matchServer.setDifferent(false);
                     }
-                    matchServer.setCalendarId(matchCalendar.getCalendarId());
                 }
             }
 
@@ -103,5 +103,8 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
         return 0;
     }
 
+    private boolean isEqualEvent(Match matchServer, Match matchCalendar) {
+        return matchServer.getId().equalsIgnoreCase(matchCalendar.getId());
+    }
 }
 

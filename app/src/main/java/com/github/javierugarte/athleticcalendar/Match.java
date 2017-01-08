@@ -72,11 +72,11 @@ public class Match {
             return null;
         }
 
-        return parseDate(startTime, "yyyy/MM/dd hh:mm:ss");
+        return parseDate(startTime, "yyyy/MM/dd HH:mm:ss");
     }
 
     public String getStartTimeWithFormat() {
-        return "" + DateFormat.format("dd-MM-yyyy kk:mm", getStartTime());
+        return "" + DateFormat.format("dd-MM-yyyy HH:mm", getStartTime());
     }
 
     public void setEndTime(String endTime) {
@@ -88,7 +88,7 @@ public class Match {
             return null;
         }
 
-        return parseDate(endTime, "yyyy/MM/dd hh:mm:ss");
+        return parseDate(endTime, "yyyy/MM/dd HH:mm:ss");
     }
 
     public String getTvs() {
@@ -165,6 +165,7 @@ public class Match {
     public Event getEvent() {
         Event event = new Event()
                 .setSummary(getTitle())
+                .setDescription(getId())
                 .setLocation(getTvs());
 
         DateTime startDateTime = new DateTime(getStartTime());
