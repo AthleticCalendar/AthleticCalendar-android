@@ -165,6 +165,7 @@ public class Match {
     public Event getEvent() {
         Event event = new Event()
                 .setSummary(getTitle())
+                .setDescription(getId())
                 .setLocation(getTvs());
 
         DateTime startDateTime = new DateTime(getStartTime());
