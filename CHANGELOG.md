@@ -1,6 +1,9 @@
 Release notes
 =============
 
+#### 1.2.0
+* New icon
+
 #### 1.1.1
 
 * Fixed bug when the match title is equals
