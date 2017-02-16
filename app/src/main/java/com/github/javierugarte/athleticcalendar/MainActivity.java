@@ -10,11 +10,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
-    private static final String CALENDAR_ID = "uuccestadv7l5ghra505fjt964@group.calendar.google.com";
+    private static final String CALENDAR_ID = BuildConfig.CALENDAR_ID;
     private static final String PREF_ACCOUNT_NAME = "accountName";
 
     @Override
@@ -85,11 +85,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void getResultsFromApi() {
-        if (! isGooglePlayServicesAvailable()) {
+        if (!isGooglePlayServicesAvailable()) {
             acquireGooglePlayServices();
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
-        } else if (! isDeviceOnline()) {
+        } else if (!isDeviceOnline()) {
             outputText = "No network connection available.";
         } else {
             new GoogleCalendar().getEvents(CALENDAR_ID, mCredential, new GoogleCalendar.OnEventsResponseListener() {
