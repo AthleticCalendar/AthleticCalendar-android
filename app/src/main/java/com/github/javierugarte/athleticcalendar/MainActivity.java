@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private String outputText;
     ProgressDialog mProgress;
 
-    BasicListAdapter adapter = new BasicListAdapter(this);
+    MergeDatas mergeDatas = new MergeDatas();
+    BasicListAdapter adapter = null;
     SwipeRefreshLayout swipeContainer;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
@@ -96,7 +97,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                 @Override
                 public void onResult(List<Match> matches) {
-                    adapter.setDataCalendar(matches);
+                    mergeDatas.setDataCalendar(matches);
+                    adapter.setMatches(mergeDatas.mergeData());
+                    adapter.notifyDataSetChanged();
                     StringBuilder message = new StringBuilder("");
                     for (Match match : matches) {
                         message.append(match.getTitle()).append("  ").append(match.getStartTimeWithFormat()).append("\n");
@@ -140,7 +143,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         matchDataManager.getNextMatches("", new OnNextMatchesResponse() {
             @Override
             public void onSuccess(List<Match> matches) {
-                adapter.setDataServer(matches);
+                mergeDatas.setDataServer(matches);
+                adapter.setMatches(mergeDatas.mergeData());
+                adapter.notifyDataSetChanged();
                 swipeContainer.setRefreshing(false);
             }
 
@@ -332,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private void mountRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new BasicListAdapter(this);
         recyclerView.setAdapter(adapter);
 
         adapter.setOnClickItem(new BasicListAdapter.OnClickItem() {
