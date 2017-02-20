@@ -1,6 +1,9 @@
 Release notes
 =============
 
+#### 1.2.1
+* Change next matches services
+
 #### 1.2.0
 * New icon
 
