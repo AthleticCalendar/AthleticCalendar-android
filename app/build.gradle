@@ -2,38 +2,40 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.github.javierugarte.athleticcalendar"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 3
-        versionName "1.2.0"
+        versionCode 4
+        versionName "1.2.1"
     }
     buildTypes {
         debug {
             debuggable true
             applicationIdSuffix ".debug"
+            buildConfigField "String", "CALENDAR_ID", "\"uh3m0frq59vsbhbuo2um0a5i40@group.calendar.google.com\""
         }
         release {
             minifyEnabled false
+            buildConfigField "String", "CALENDAR_ID", "\"uuccestadv7l5ghra505fjt964@group.calendar.google.com\""
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-    def support = '25.0.1'
+    def support = '25.1.1'
     compile "com.android.support:appcompat-v7:$support"
     compile "com.android.support:support-v4:$support"
     compile "com.android.support:recyclerview-v7:$support"
-    compile 'com.android.volley:volley:1.0.0'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
     compile 'com.github.bumptech.glide:glide:3.7.0'
 
     compile 'pub.devrel:easypermissions:0.2.1'
-    compile 'com.google.android.gms:play-services-auth:9.8.0'
+    compile 'com.google.android.gms:play-services-auth:10.0.1'
     compile('com.google.api-client:google-api-client-android:1.22.0') {
         exclude group: 'org.apache.httpcomponents'
     }
@@ -41,4 +43,6 @@ dependencies {
         exclude group: 'org.apache.httpcomponents'
     }
 
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.json:json:20160810'
 }
