@@ -1,7 +1,5 @@
 package com.github.javierugarte.athleticcalendar;
 
-import com.android.volley.VolleyError;
-
 import java.util.List;
 
 /**
@@ -12,5 +10,5 @@ public interface OnNextMatchesResponse {
 
     void onSuccess(List<Match> matches);
 
-    void onErrorResponse(VolleyError error);
+    void onErrorResponse(Exception error);
 }

@@ -30,7 +30,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:$support"
     compile "com.android.support:support-v4:$support"
     compile "com.android.support:recyclerview-v7:$support"
-    compile 'com.android.volley:volley:1.0.0'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
     compile 'com.github.bumptech.glide:glide:3.7.0'
 
@@ -43,4 +43,6 @@ dependencies {
         exclude group: 'org.apache.httpcomponents'
     }
 
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.json:json:20160810'
 }

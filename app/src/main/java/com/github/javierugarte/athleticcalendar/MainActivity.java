@@ -23,8 +23,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
 import com.github.javierugarte.athleticcalendar.calendar.GoogleCalendar;
+import com.github.javierugarte.athleticcalendar.network.NextMatchesRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -139,18 +139,24 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void getResultFromServer() {
-        MatchDataManager matchDataManager = new MatchDataManager(this);
+        NextMatchesRequest matchDataManager = new NextMatchesRequest();
         matchDataManager.getNextMatches("", new OnNextMatchesResponse() {
             @Override
-            public void onSuccess(List<Match> matches) {
-                mergeDatas.setDataServer(matches);
-                adapter.setMatches(mergeDatas.mergeData());
-                adapter.notifyDataSetChanged();
-                swipeContainer.setRefreshing(false);
+            public void onSuccess(final List<Match> matches) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mergeDatas.setDataServer(matches);
+                        adapter.setMatches(mergeDatas.mergeData());
+                        adapter.notifyDataSetChanged();
+                        swipeContainer.setRefreshing(false);
+                    }
+                });
+
             }
 
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onErrorResponse(Exception error) {
                 swipeContainer.setRefreshing(false);
             }
         });
@@ -195,21 +201,22 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      * Called when an activity launched here (specifically, AccountPicker
      * and authorization) exits, giving you the requestCode you started it with,
      * the resultCode it returned, and any additional data from it.
+     *
      * @param requestCode code indicating which activity result is incoming.
-     * @param resultCode code indicating the result of the incoming
-     *     activity result.
-     * @param data Intent (containing result data) returned by incoming
-     *     activity result.
+     * @param resultCode  code indicating the result of the incoming
+     *                    activity result.
+     * @param data        Intent (containing result data) returned by incoming
+     *                    activity result.
      */
     @Override
     protected void onActivityResult(
             int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
+        switch (requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
                     outputText = "This app requires Google Play Services. Please install " +
-                                    "Google Play Services on your device and relaunch this app.";
+                            "Google Play Services on your device and relaunch this app.";
                 } else {
                     getResultsFromApi();
                 }
@@ -240,11 +247,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     /**
      * Respond to requests for permissions at runtime for API 23 and above.
-     * @param requestCode The request code passed in
-     *     requestPermissions(android.app.Activity, String, int, String[])
-     * @param permissions The requested permissions. Never null.
+     *
+     * @param requestCode  The request code passed in
+     *                     requestPermissions(android.app.Activity, String, int, String[])
+     * @param permissions  The requested permissions. Never null.
      * @param grantResults The grant results for the corresponding permissions
-     *     which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
+     *                     which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
      */
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -258,9 +266,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     /**
      * Callback for when a permission is granted using the EasyPermissions
      * library.
+     *
      * @param requestCode The request code associated with the requested
-     *         permission
-     * @param list The requested permission list. Never null.
+     *                    permission
+     * @param list        The requested permission list. Never null.
      */
     @Override
     public void onPermissionsGranted(int requestCode, List<String> list) {
@@ -270,9 +279,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     /**
      * Callback for when a permission is denied using the EasyPermissions
      * library.
+     *
      * @param requestCode The request code associated with the requested
-     *         permission
-     * @param list The requested permission list. Never null.
+     *                    permission
+     * @param list        The requested permission list. Never null.
      */
     @Override
     public void onPermissionsDenied(int requestCode, List<String> list) {
@@ -281,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     /**
      * Checks whether the device currently has a network connection.
+     *
      * @return true if the device has a network connection, false otherwise.
      */
     private boolean isDeviceOnline() {
@@ -292,8 +303,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     /**
      * Check that Google Play services APK is installed and up to date.
+     *
      * @return true if Google Play Services is available and up to
-     *     date on this device; false otherwise.
+     * date on this device; false otherwise.
      */
     private boolean isGooglePlayServicesAvailable() {
         GoogleApiAvailability apiAvailability =
@@ -321,8 +333,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     /**
      * Display an error dialog showing that Google Play Services is missing
      * or out of date.
+     *
      * @param connectionStatusCode code describing the presence (or lack of)
-     *     Google Play Services on this device.
+     *                             Google Play Services on this device.
      */
     void showGooglePlayServicesAvailabilityErrorDialog(
             final int connectionStatusCode) {
