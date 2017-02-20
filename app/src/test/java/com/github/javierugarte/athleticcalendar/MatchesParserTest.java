@@ -4,6 +4,7 @@ import com.github.javierugarte.athleticcalendar.network.MatchesParser;
 
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -51,7 +52,7 @@ public class MatchesParserTest {
         MatchesParser parser = new MatchesParser();
         List<Match> matches = parser.parse(json);
 
-        assertEquals("Athletic", matches.get(0).getTeam1());
+        assertEquals("Athletic", matches.get(1).getTeam1());
     }
 
     @Test
@@ -61,6 +62,16 @@ public class MatchesParserTest {
         List<Match> matches = parser.parse(json);
 
         assertEquals("APOEL", matches.get(0).getTeam1());
+    }
+
+    @Test
+    public void return_image1_when_json_is_valid () throws Exception {
+        String json = ResourceHelper.getStringFromFile(getClass().getResource("/response.json"));
+        MatchesParser parser = new MatchesParser();
+        List<Match> matches = parser.parse(json);
+
+        assertEquals("http://thumb.resfu.com/img_data/escudos/medium/10076.jpg?size=60x&ext=png&lossy=1&1",
+                matches.get(0).getTeam1Shield());
     }
 
     @Test

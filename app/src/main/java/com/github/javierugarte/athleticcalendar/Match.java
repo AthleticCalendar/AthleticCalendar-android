@@ -1,6 +1,8 @@
 package com.github.javierugarte.athleticcalendar;
 
+import android.support.annotation.NonNull;
 import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
@@ -17,7 +19,9 @@ import java.util.Locale;
  * Copyright 2016 Javier González
  * All right reserved.
  */
-public class Match {
+public class Match implements Comparable<Match> {
+
+    public static final long HOUR = 3600*1000;
 
     private String id;
 
@@ -28,7 +32,6 @@ public class Match {
     private String team2Shield;
 
     private String startTime;
-    private String endTime;
 
     private String tvs;
     private boolean different;
@@ -63,32 +66,24 @@ public class Match {
         this.startTime = startTime;
     }
 
-    public void setStartTime(DateTime dateTime) {
-        startTime = dateTime.toString();
-    }
-
     public Date getStartTime() {
         if (startTime == null) {
             return null;
         }
 
-        return parseDate(startTime, "yyyy/MM/dd HH:mm:ss");
+        if (startTime.contains("/")) {
+            return parseDate(startTime, "yyyy/MM/dd HH:mm:ss");
+        } else {
+            return parseDate(startTime, "yyyy-MM-dd HH:mm:ss");
+        }
     }
 
     public String getStartTimeWithFormat() {
         return "" + DateFormat.format("dd-MM-yyyy HH:mm", getStartTime());
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
     public Date getEndTime() {
-        if (endTime == null) {
-            return null;
-        }
-
-        return parseDate(endTime, "yyyy/MM/dd HH:mm:ss");
+        return new Date(getStartTime().getTime() + 2 * HOUR);
     }
 
     public String getTvs() {
@@ -193,4 +188,8 @@ public class Match {
 
     }
 
+    @Override
+    public int compareTo(@NonNull Match match) {
+        return getStartTime().compareTo(match.getStartTime());
+    }
 }
