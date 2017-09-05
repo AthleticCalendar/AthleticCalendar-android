@@ -8,14 +8,14 @@ android {
         applicationId "com.github.javierugarte.athleticcalendar"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 4
-        versionName "1.2.1"
+        versionCode 5
+        versionName "1.2.2"
     }
     buildTypes {
         debug {
             debuggable true
             applicationIdSuffix ".debug"
-            buildConfigField "String", "CALENDAR_ID", "\"uh3m0frq59vsbhbuo2um0a5i40@group.calendar.google.com\""
+            buildConfigField "String", "CALENDAR_ID", "\"uuccestadv7l5ghra505fjt964@group.calendar.google.com\""
         }
         release {
             minifyEnabled false

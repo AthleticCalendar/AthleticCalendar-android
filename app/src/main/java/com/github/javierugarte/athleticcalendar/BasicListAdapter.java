@@ -18,9 +18,14 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
         void onClick(View view, int position, Match match);
     }
 
+    public interface OnLongClickItem {
+        void onLongClick(View view, int position, Match match);
+    }
+
     private List<Match> matches = null;
 
     private OnClickItem onClick = null;
+    private OnLongClickItem onLongClickItem = null;
     private final Context context;
 
     public BasicListAdapter(Context context) {
@@ -35,6 +40,10 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
         this.onClick = onClickItem;
     }
 
+    public void setOnLongClickItem(OnLongClickItem onLongClickItem) {
+        this.onLongClickItem = onLongClickItem;
+    }
+
     @Override
     public MatchCellViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         return new MatchCellViewHolder(
@@ -47,15 +56,24 @@ public class BasicListAdapter extends RecyclerView.Adapter<MatchCellViewHolder> 
     @Override
     public void onBindViewHolder(MatchCellViewHolder holder, final int position) {
         holder.bind(matches.get(position));
+        final Match match = matches.get(position);
         holder.getView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (onClick != null) {
-                    Match match = matches.get(position);
                     if (!match.exists() || match.isDifferent()) {
                         onClick.onClick(view, position, match);
                     }
                 }
+            }
+        });
+        holder.getView().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (onLongClickItem != null) {
+                    onLongClickItem.onLongClick(view, position, match);
+                }
+                return false;
             }
         });
     }

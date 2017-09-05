@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import com.github.javierugarte.athleticcalendar.Match;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAuthIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.http.HttpTransport;
@@ -88,6 +89,8 @@ public class EventsRequestTask extends AsyncTask<Void, Void, Events> {
                 l.onError((GooglePlayServicesAvailabilityIOException) mLastError);
             } else if (mLastError instanceof UserRecoverableAuthIOException) {
                 l.onErrorAuth((UserRecoverableAuthIOException) mLastError);
+            } else if (mLastError instanceof GoogleAuthIOException) {
+                l.onError(new Exception("GoogleAuthIOException"));
             } else {
                 l.onError(mLastError);
             }

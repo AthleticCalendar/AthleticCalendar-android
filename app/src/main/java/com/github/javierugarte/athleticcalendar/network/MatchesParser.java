@@ -34,6 +34,9 @@ public class MatchesParser {
 
         for (int i = 0; i < leaguesArray.length(); i++) {
             JSONObject leaguesJson = leaguesArray.getJSONObject(i);
+            if (!leaguesJson.has("matches")) {
+                continue;
+            }
             JSONArray matchesArray = leaguesJson.getJSONArray("matches");
             for (int j = 0; j < matchesArray.length(); j++) {
                 JSONObject matchJson = matchesArray.getJSONObject(j);

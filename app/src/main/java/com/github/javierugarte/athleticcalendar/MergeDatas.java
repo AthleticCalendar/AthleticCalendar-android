@@ -19,7 +19,9 @@ public class MergeDatas {
     }
 
     public List<Match> mergeData() {
-        if (dataServer == null || dataCalendar == null) {
+        if (dataServer != null && dataCalendar == null) {
+            dataMerge = new ArrayList<>();
+            dataMerge.addAll(dataServer);
             return dataMerge;
         }
 
