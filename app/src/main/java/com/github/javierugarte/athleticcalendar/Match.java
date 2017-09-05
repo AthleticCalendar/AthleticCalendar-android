@@ -2,7 +2,6 @@ package com.github.javierugarte.athleticcalendar;
 
 import android.support.annotation.NonNull;
 import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;

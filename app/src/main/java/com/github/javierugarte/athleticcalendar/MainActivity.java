@@ -4,6 +4,8 @@ import android.Manifest;
 import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -46,7 +48,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     GoogleAccountCredential mCredential;
-    private String outputText;
+    private String calendarText;
+    private String beSoccerText = "";
     ProgressDialog mProgress;
 
     MergeDatas mergeDatas = new MergeDatas();
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
-            outputText = "No network connection available.";
+            calendarText = "No network connection available.";
         } else {
             new GoogleCalendar().getEvents(CALENDAR_ID, mCredential, new GoogleCalendar.OnEventsResponseListener() {
 
@@ -104,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     for (Match match : matches) {
                         message.append(match.getTitle()).append("  ").append(match.getStartTimeWithFormat()).append("\n");
                     }
-                    outputText = message.toString();
+                    calendarText = message.toString();
                     swipeContainer.setRefreshing(false);
                 }
 
@@ -131,6 +134,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                 @Override
                 public void onError(Exception error) {
+                    mergeDatas.setDataCalendar(null);
+                    adapter.setMatches(null);
+                    adapter.notifyDataSetChanged();
                     Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
                     swipeContainer.setRefreshing(false);
                 }
@@ -150,6 +156,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         adapter.setMatches(mergeDatas.mergeData());
                         adapter.notifyDataSetChanged();
                         swipeContainer.setRefreshing(false);
+                        StringBuilder message = new StringBuilder("");
+                        if (matches != null) {
+                            for (Match match : matches) {
+                                message.append(match.getTitle()).append("  ").append(match.getStartTimeWithFormat()).append("\n");
+                            }
+                            beSoccerText = message.toString();
+                        }
                     }
                 });
 
@@ -215,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         switch (requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                    outputText = "This app requires Google Play Services. Please install " +
+                    calendarText = "This app requires Google Play Services. Please install " +
                             "Google Play Services on your device and relaunch this app.";
                 } else {
                     getResultsFromApi();
@@ -361,6 +374,34 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 insertEvent(match);
             }
         });
+
+        adapter.setOnLongClickItem(new BasicListAdapter.OnLongClickItem() {
+            @Override
+            public void onLongClick(View view, int position, final Match match) {
+                CharSequence[] items = new CharSequence[] {"Copy Match", "Copy TVs"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Select a action");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                copyClipboard(match.getTitle());
+                                break;
+                            case 1:
+                                copyClipboard(match.getTvs());
+                                break;
+                        }
+                    }
+                });
+                builder.create().show();
+            }
+        });
+    }
+
+    private void copyClipboard(String text) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(text, text);
+        clipboard.setPrimaryClip(clip);
     }
 
     private void mountSwipeRefreshLayout() {
@@ -378,10 +419,22 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     }
 
+    private void showDialogWithNetworkEvents() {
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Events BeSoccer")
+                .setMessage(beSoccerText)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
+    }
+
+
     private void showDialogWithCalendarEvents() {
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Events calendar")
-                .setMessage(outputText)
+                .setMessage(calendarText)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }
@@ -445,6 +498,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         switch (item.getItemId()) {
             case R.id.show_calendar:
                 showDialogWithCalendarEvents();
+                break;
+            case R.id.show_besoccer:
+                showDialogWithNetworkEvents();
                 break;
         }
         return super.onOptionsItemSelected(item);
